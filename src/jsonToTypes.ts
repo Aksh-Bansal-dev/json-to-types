@@ -4,9 +4,9 @@
     "num": 21,
     "arr":[
         {
-            "arrsr": "good"
+            "arrsr": "good",
             "nested": {
-                "nice": 1
+                "nice": [1,2,3]
             }
         }
     ],
@@ -43,7 +43,6 @@ const jsonToTypes = (name: string, json: any): string => {
   });
   res += "}\n";
   while (remainingJson.length !== 0) {
-    console.log(remainingJson[0]);
     res += "\n\n" + jsonToTypes(remainingJson[0].name, remainingJson[0].obj);
     remainingJson.shift();
   }
@@ -57,10 +56,12 @@ const getType = (
 ): string => {
   const type = typeof obj;
   if (type === "object") {
-    if (Array.isArray(obj)) {
+    if (obj === null) {
+      return "null";
+    } else if (Array.isArray(obj)) {
       const interfaceName = capitalizeFirstLetter(name);
       if (obj.length === 0) {
-        return "[]";
+        return "any[]";
       }
       return getType(interfaceName, obj[0], pushToStack) + "[]";
     } else {
@@ -77,6 +78,4 @@ function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// const addSpace = (n: number): string=>{
-
-// }
+// TODO: check if a field take multiple types (possible in array)
