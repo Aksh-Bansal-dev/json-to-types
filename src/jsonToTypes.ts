@@ -2,7 +2,14 @@
 {
     "hello":"hi", 
     "num": 21,
-    "arr":[],
+    "arr":[
+        {
+            "arrsr": "good"
+            "nested": {
+                "nice": 1
+            }
+        }
+    ],
     "obj": {
         "again": "depth"
     }
@@ -49,10 +56,14 @@ const getType = (
   pushToStack: (e: jsonItem) => void
 ): string => {
   const type = typeof obj;
-  let res = "";
   if (type === "object") {
     if (Array.isArray(obj)) {
-      return "[]";
+      const interfaceName = capitalizeFirstLetter(name);
+      if (obj.length === 0) {
+        return "[]";
+      }
+      //   pushToStack({ name: interfaceName, obj: obj[0] });
+      return "[]" + getType(interfaceName, obj[0], pushToStack);
     } else {
       const interfaceName = capitalizeFirstLetter(name);
       pushToStack({ name: interfaceName, obj });
