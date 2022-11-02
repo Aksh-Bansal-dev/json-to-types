@@ -62,8 +62,7 @@ const getType = (
       if (obj.length === 0) {
         return "[]";
       }
-      //   pushToStack({ name: interfaceName, obj: obj[0] });
-      return "[]" + getType(interfaceName, obj[0], pushToStack);
+      return getType(interfaceName, obj[0], pushToStack) + "[]";
     } else {
       const interfaceName = capitalizeFirstLetter(name);
       pushToStack({ name: interfaceName, obj });
