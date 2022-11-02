@@ -1,17 +1,72 @@
 /*
-{"hello":"hi", "num": 21,"arr":[]}
+{
+    "hello":"hi", 
+    "num": 21,
+    "arr":[],
+    "obj": {
+        "again": "depth"
+    }
+}
 */
-export function jsonToTypes(json: string): string {
+interface jsonItem {
+  name: string;
+  obj: any;
+}
+export const jsonStringToTypes = (name: string, obj: string): string => {
   try {
-    let res = "export interface jsonObj = {\n";
-    let obj = JSON.parse(json);
-    Object.keys(obj).forEach((e) => {
-      res += "    ";
-      res += e + ": " + typeof obj[e] + ";\n";
-    });
-    res += "}";
-    return res;
+    return jsonToTypes(name, JSON.parse(obj));
   } catch (error) {
     return "";
   }
+};
+
+const jsonToTypes = (name: string, json: any): string => {
+  let res = `export interface ${name} {\n`;
+
+  let remainingJson: jsonItem[] = [];
+  Object.keys(json).forEach((e) => {
+    res += "    ";
+    res +=
+      e +
+      ": " +
+      getType(e, json[e], (e) => {
+        remainingJson.push(e);
+      }) +
+      ";\n";
+  });
+  res += "}\n";
+  while (remainingJson.length !== 0) {
+    console.log(remainingJson[0]);
+    res += "\n\n" + jsonToTypes(remainingJson[0].name, remainingJson[0].obj);
+    remainingJson.shift();
+  }
+  return res;
+};
+
+const getType = (
+  name: string,
+  obj: any,
+  pushToStack: (e: jsonItem) => void
+): string => {
+  const type = typeof obj;
+  let res = "";
+  if (type === "object") {
+    if (Array.isArray(obj)) {
+      return "[]";
+    } else {
+      const interfaceName = capitalizeFirstLetter(name);
+      pushToStack({ name: interfaceName, obj });
+      return interfaceName;
+    }
+  } else {
+    return type;
+  }
+};
+
+function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+// const addSpace = (n: number): string=>{
+
+// }
