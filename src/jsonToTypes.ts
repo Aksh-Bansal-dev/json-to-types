@@ -28,8 +28,12 @@ export const jsonStringToTypes = (name: string, obj: string): string => {
 };
 
 const jsonToTypes = (name: string, json: any): string => {
+  if (Array.isArray(json)) {
+    console.log(json[0]);
+    return jsonToTypes(name, json[0]);
+  }
+  console.log("helle");
   let res = `export interface ${name} {\n`;
-
   let remainingJson: jsonItem[] = [];
   Object.keys(json).forEach((e) => {
     res += "    ";
